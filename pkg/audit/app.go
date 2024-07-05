@@ -7,9 +7,10 @@ import (
 	"os/signal"
 	"sync"
 
-	"github.com/mrtc0/bouheki/pkg/audit/fileaccess"
-	"github.com/mrtc0/bouheki/pkg/audit/mount"
-	"github.com/mrtc0/bouheki/pkg/audit/network"
+	"github.com/mrtc0/bouheki/pkg/audit/signallog"
+	// "github.com/mrtc0/bouheki/pkg/audit/fileaccess"
+	// "github.com/mrtc0/bouheki/pkg/audit/mount"
+	// "github.com/mrtc0/bouheki/pkg/audit/network"
 	"github.com/mrtc0/bouheki/pkg/config"
 	log "github.com/mrtc0/bouheki/pkg/log"
 	"github.com/mrtc0/bouheki/pkg/utils"
@@ -58,9 +59,9 @@ func NewApp(version string) *cli.App {
 		var wg sync.WaitGroup
 		wg.Add(3)
 
-		go fileaccess.RunAudit(ctx, &wg, conf)
-		go network.RunAudit(ctx, &wg, conf)
-		go mount.RunAudit(ctx, &wg, conf)
+		go signallog.RunAudit(ctx, &wg, conf)
+		// go network.RunAudit(ctx, &wg, conf)
+		// go mount.RunAudit(ctx, &wg, conf)
 
 		wg.Wait()
 		log.Info("Terminate all audit.")
