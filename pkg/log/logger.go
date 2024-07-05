@@ -171,3 +171,25 @@ func (l *RestrictedMountLog) Info() {
 		"SourcePath": l.SourcePath,
 	}).Info("Mount event is trapped in th filter.")
 }
+
+type SignalLog struct {
+	Action   string
+	Hostname string
+	PID      uint32
+	Tpid     uint32
+	Sig      int32
+	Ret      int32
+	Comm     string
+}
+
+func (l *SignalLog) Info() {
+	Logger.WithFields(logrus.Fields{
+		"Action":   l.Action,
+		"Hostname": l.Hostname,
+		"PID":      l.PID,
+		"Tpid":     l.Tpid,
+		"Sig":      l.Sig,
+		"Ret":      l.Ret,
+		"Comm":     l.Comm,
+	}).Info("Signal event is trapped in the filter.")
+}
