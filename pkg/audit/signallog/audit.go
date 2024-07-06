@@ -14,7 +14,12 @@ import (
 )
 
 const (
-	TASK_COMM_LEN = 16
+	BPF_OBJECT_NAME        = "log-signal"
+	BPF_ENTRY_PROGRAM_NAME = "kill_entry"
+	BPF_EXIT_PROGRAM_NAME  = "kill_exit"
+	ALLOWED_TYPES_MAP_NAME = "allowed_types_signals"
+	DENIED_TYPES_MAP_NAME  = "denied_types_signals"
+	TASK_COMM_LEN          = 16
 )
 
 type Event struct {
@@ -30,7 +35,7 @@ func setupBPFProgram() (*libbpfgo.Module, error) {
 	if err != nil {
 		return nil, err
 	}
-	mod, err := libbpfgo.NewModuleFromBuffer(bytecode, "log-signal")
+	mod, err := libbpfgo.NewModuleFromBuffer(bytecode, BPF_OBJECT_NAME)
 	if err != nil {
 		return nil, err
 	}
@@ -56,6 +61,11 @@ func RunAudit(ctx context.Context, wg *sync.WaitGroup, conf *config.Config) erro
 		mod:    mod,
 		config: conf,
 	}
+	mgr.SetConfigToMap()
+
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	if err := mgr.Attach(); err != nil {
 		log.Fatal(err)
@@ -79,12 +89,11 @@ func RunAudit(ctx context.Context, wg *sync.WaitGroup, conf *config.Config) erro
 				}
 				hostname, _ := os.Hostname()
 				signalLog := log.SignalLog{
-					Action:   "Signal sent",
+					Action:   retToaction(event.Ret),
 					Hostname: hostname,
 					PID:      event.Pid,
 					Tpid:     event.Tpid,
 					Sig:      event.Sig,
-					Ret:      event.Ret,
 					Comm:     trimNullChars(event.Comm[:]),
 				}
 				signalLog.Info()
@@ -121,4 +130,12 @@ func trimNullChars(b []byte) string {
 		return string(b)
 	}
 	return string(b[:n])
+}
+
+func retToaction(ret int32) string {
+	if ret == 0 {
+		return "ALLOWED"
+	} else {
+		return "BLOCKED"
+	}
 }

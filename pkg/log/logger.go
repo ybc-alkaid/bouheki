@@ -176,10 +176,9 @@ type SignalLog struct {
 	Action   string
 	Hostname string
 	PID      uint32
+	Comm     string
 	Tpid     uint32
 	Sig      int32
-	Ret      int32
-	Comm     string
 }
 
 func (l *SignalLog) Info() {
@@ -189,7 +188,6 @@ func (l *SignalLog) Info() {
 		"PID":      l.PID,
 		"Tpid":     l.Tpid,
 		"Sig":      l.Sig,
-		"Ret":      l.Ret,
 		"Comm":     l.Comm,
 	}).Info("Signal event is trapped in the filter.")
 }

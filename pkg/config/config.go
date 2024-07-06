@@ -26,6 +26,17 @@ type RestrictedFileAccessConfig struct {
 	Deny   []string `yaml:"deny"`
 }
 
+type SignalLogConfig struct {
+	Enable bool
+	Mode   string     `yaml:"mode"`
+	Type   SignalType `yaml:"type"`
+	// Target string `yaml:"target"`
+	// PID PIDConfig `yaml:"pid"`
+	// Command CommandConfig `yaml:"command"`
+	// UID     UIDConfig     `yaml:"uid"`
+	// GID     GIDConfig     `yaml:"gid"`
+}
+
 type RestrictedMountConfig struct {
 	Enable         bool
 	Mode           string   `yaml:"mode"`
@@ -55,6 +66,15 @@ type CommandConfig struct {
 	Deny  []string `yaml:"deny"`
 }
 
+type SignalType struct {
+	Allow []string `yaml:"allow"`
+	Deny  []string `yaml:"deny"`
+}
+type PIDConfig struct {
+	Allow []uint `yaml:"allow"`
+	Deny  []uint `yaml:"deny"`
+}
+
 type UIDConfig struct {
 	Allow []uint `yaml:"allow"`
 	Deny  []uint `yaml:"deny"`
@@ -79,6 +99,7 @@ type Config struct {
 	RestrictedFileAccessConfig `yaml:"files"`
 	RestrictedMountConfig      `yaml:"mount"`
 	DNSProxyConfig             `yaml:"dns_proxy"`
+	SignalLogConfig            `yaml:"signals"`
 	Log                        LogConfig
 }
 
@@ -112,6 +133,15 @@ func DefaultConfig() *Config {
 			Upstreams:     []string{},
 			BindAddresses: []string{"127.0.0.1", "172.17.0.1"},
 		},
+		SignalLogConfig: SignalLogConfig{
+			Enable: true,
+			Mode:   "monitor",
+			Type: SignalType{
+				Allow: []string{"/"},
+				Deny:  []string{},
+			},
+		},
+
 		Log: LogConfig{
 			Level:  "INFO",
 			Format: "json",

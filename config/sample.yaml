@@ -1,7 +1,33 @@
-files:
-  mode: block
-  target: host
-  allow:
-    - /
-  deny:
-    - /home/vagrant/bouheki-test/bouheki/build/secure-file.txt
+# files:
+#   mode: block
+#   target: host
+#   allow:
+#     - /
+#   deny:
+#     - /home/vagrant/bouheki-test/bouheki/build/secure-file.txt
+
+signals:
+  mode: monitor # TODO block
+  # Deny or allow specific signals. Default is to deny.
+  type:
+    deny: # see table in docs/configurations/signals-log/configurations.md
+      - 2
+      - 6
+      - 9
+    allow: []
+  # # Restriction by PIDs (optional)
+  # pid:
+  #   allow: []
+  #   deny: []
+  # # Restriction by command name (optional)
+  # command:
+  #   allow: []
+  #   deny: []
+  # # Restriction by UID (optional)
+  # uid:
+  #   allow: []
+  #   deny: []
+  # # Restriction by GID (optional)
+  # gid:
+  #   allow: []
+  #   deny: []

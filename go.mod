@@ -1,6 +1,6 @@
 module github.com/mrtc0/bouheki
 
-go 1.17
+go 1.20
 
 require (
 	github.com/aquasecurity/libbpfgo v0.2.4-libbpf-0.6.1
