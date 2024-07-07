@@ -10,11 +10,8 @@ signals:
   mode: monitor # TODO block
   # Deny or allow specific signals. Default is to deny.
   type:
-    deny: # see table in docs/configurations/signals-log/configurations.md
-      - 2
-      - 6
-      - 9
-    allow: []
+    deny: [2,6,9] # see table in docs/configurations/signals-log/configurations.md
+    allow: ["*"]
   # # Restriction by PIDs (optional)
   # pid:
   #   allow: []

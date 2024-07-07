@@ -40,7 +40,7 @@ static u64 cb_check_path(void *map, void *key, void *value, void *ctx) {
     struct callback_ctx *cb_ctx = (struct callback_ctx *)ctx;
     int *sigtype = (int *)value;
     // bpf_printk("Checking %d\n vs %d\n", *sigtype, cb_ctx->sigtype);
-    if (*sigtype == cb_ctx->sigtype) {
+    if (*sigtype == cb_ctx->sigtype || *sigtype == 42) { // "*" charecter detected (TODO - maybe confuse with real-time signal 42)
         cb_ctx->found = true;
         return 1;
     }
@@ -49,7 +49,7 @@ static u64 cb_check_path(void *map, void *key, void *value, void *ctx) {
 static u64 cb_print_map_elem(void *map, void *key, void *value, void *ctx) {
     int *k = (int *)key;
     int *v = (int *)value;
-    bpf_printk("Map Element - Key: %d, Value: %d\n", *k, *v);
+    // bpf_printk("Map Element - Key: %d, Value: %d\n", *k, *v);
     return 0;
 }
 
@@ -58,7 +58,8 @@ static int probe_entry(void *ctx, pid_t tpid, int sig) {
   __u64 pid_tgid;
   __u32 tid;
   int ret = -1;
-  struct signallog_bouheki_config *config = (struct signallog_bouheki_config *)bpf_map_lookup_elem(&signallog_bouheki_config_map, 0);
+  int index = 0;
+  struct signallog_bouheki_config *config = (struct signallog_bouheki_config *)bpf_map_lookup_elem(&signallog_bouheki_config_map, &index);
 
   pid_tgid = bpf_get_current_pid_tgid();
   tid = (__u32)pid_tgid;
@@ -90,11 +91,11 @@ static int probe_entry(void *ctx, pid_t tpid, int sig) {
   }
 
 out:
-  if (config && config->mode == MODE_MONITOR) {
-        ret = 0;
-    }
+  // if (config && config->mode == MODE_MONITOR) {
+  //       ret = 0;
+  //   }
   event.ret = ret;
-    bpf_printk("Returning %d\n", event.ret);
+    // bpf_printk("Returning %d\n", event.ret);
   bpf_perf_event_output((void *)ctx, &signal_events, BPF_F_CURRENT_CPU, &event,
                         sizeof(event));
 
@@ -102,24 +103,6 @@ out:
 }
 
 static int probe_exit(void *ctx, int ret) {
-  // TODO - whatst the need of this function?
-  __u64 pid_tgid = bpf_get_current_pid_tgid();
-  __u32 tid = (__u32)pid_tgid;
-  struct event *eventp;
-
-  //  eventp = bpf_map_lookup_elem(&signal_events, &tid);
-  if (!eventp)
-    return 0;
-
-  eventp->ret = ret;
-
-  //  bpf_printk("PID %d (%s) sent signal %d ",
-  //            eventp->pid, eventp->comm, eventp->sig);
-  //  bpf_printk("to PID %d, ret = %d",
-  //            eventp->tpid, ret);
-
-cleanup:
-  //  bpf_map_delete_elem(&signal_events, &tid);
   return ret;
 }
 
