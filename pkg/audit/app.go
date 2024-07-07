@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"github.com/mrtc0/bouheki/pkg/audit/signallog"
+
 	// "github.com/mrtc0/bouheki/pkg/audit/fileaccess"
 	// "github.com/mrtc0/bouheki/pkg/audit/mount"
 	// "github.com/mrtc0/bouheki/pkg/audit/network"
@@ -60,6 +61,7 @@ func NewApp(version string) *cli.App {
 		wg.Add(3)
 
 		go signallog.RunAudit(ctx, &wg, conf)
+		// go fileaccess.RunAudit(ctx, &wg, conf)
 		// go network.RunAudit(ctx, &wg, conf)
 		// go mount.RunAudit(ctx, &wg, conf)
 

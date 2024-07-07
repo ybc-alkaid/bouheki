@@ -45,25 +45,29 @@ func (m *Manager) Close() {
 }
 
 func (m *Manager) Attach() error {
-	progEnter, err := m.mod.GetProgram(BPF_ENTRY_PROGRAM_NAME)
+	progEnter, err := m.mod.GetProgram(BPF_PROGRAM_NAME)
 	if err != nil {
 		return err
 	}
 
-	_, err = progEnter.AttachTracepoint("syscalls", "sys_enter_kill")
+	_, err = progEnter.AttachLSM()
 	if err != nil {
 		return err
 	}
+	// _, err = progEnter.AttachTracepoint("syscalls", "sys_enter_kill")
+	// if err != nil {
+	// 	return err
+	// }
 
-	progExit, err := m.mod.GetProgram(BPF_EXIT_PROGRAM_NAME)
-	if err != nil {
-		return err
-	}
+	// progExit, err := m.mod.GetProgram(BPF_EXIT_PROGRAM_NAME)
+	// if err != nil {
+	// 	return err
+	// }
 
-	_, err = progExit.AttachTracepoint("syscalls", "sys_exit_kill")
-	if err != nil {
-		return err
-	}
+	// _, err = progExit.AttachTracepoint("syscalls", "sys_exit_kill")
+	// if err != nil {
+	// 	return err
+	// }
 
 	// log.Debug(fmt.Sprintf("%s attached.", "kill_entry and kill_exit"))
 	return nil

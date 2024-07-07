@@ -7,7 +7,7 @@
 #     - /home/vagrant/bouheki-test/bouheki/build/secure-file.txt
 
 signals:
-  mode: monitor # TODO block
+  mode: block # TODO block
   # Deny or allow specific signals. Default is to deny.
   type:
     deny: [2,6,9] # see table in docs/configurations/signals-log/configurations.md

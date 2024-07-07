@@ -36,6 +36,9 @@ bpf-restricted-network: $(BPF_BUILDDIR)/restricted-network.bpf.o
 .PHONY: bpf-log-signal
 bpf-log-signal: $(BPF_BUILDDIR)/log-signal.bpf.o
 
+.PHONY: bpf-restricted-signal
+bpf-restricted-signal: $(BPF_BUILDDIR)/restricted-signal.bpf.o
+
 .PHONY: bpf-restricted-file
 bpf-restricted-file: $(BPF_BUILDDIR)/restricted-file.bpf.o
 
@@ -47,7 +50,7 @@ vmlinux:
 	$(shell bpftool btf dump file /sys/kernel/btf/vmlinux format c > vmlinux.h)
 
 .PHONY: build
-build: bpf-restricted-network bpf-restricted-file bpf-restricted-mount bpf-log-signal
+build: bpf-restricted-network bpf-restricted-file bpf-restricted-mount bpf-log-signal bpf-restricted-signal
 	mkdir -p build
 	# $(CGOFLAG) go build -tags netgo -ldflags '-w -s -extldflags "-static"' -o build/bouheki cmd/bouheki/bouheki.go
 	$(CGOFLAG) go build -tags netgo  -gcflags=all="-N -l" -o build/bouheki cmd/bouheki/bouheki.go

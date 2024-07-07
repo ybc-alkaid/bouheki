@@ -14,9 +14,10 @@ import (
 )
 
 const (
-	BPF_OBJECT_NAME        = "log-signal"
-	BPF_ENTRY_PROGRAM_NAME = "kill_entry"
-	BPF_EXIT_PROGRAM_NAME  = "kill_exit"
+	BPF_OBJECT_NAME  = "log-signal"
+	BPF_PROGRAM_NAME = "block_signal"
+	// BPF_ENTRY_PROGRAM_NAME = "kill_entry"
+	// BPF_EXIT_PROGRAM_NAME  = "kill_exit"
 	ALLOWED_TYPES_MAP_NAME = "allowed_types_signals"
 	DENIED_TYPES_MAP_NAME  = "denied_types_signals"
 	TASK_COMM_LEN          = 16
@@ -31,7 +32,7 @@ type Event struct {
 }
 
 func setupBPFProgram() (*libbpfgo.Module, error) {
-	bytecode, err := bpf.EmbedFS.ReadFile("bytecode/log-signal.bpf.o")
+	bytecode, err := bpf.EmbedFS.ReadFile("bytecode/restricted-signal.bpf.o") // log-signal
 	if err != nil {
 		return nil, err
 	}
