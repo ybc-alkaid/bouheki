@@ -37,6 +37,12 @@ type SignalLogConfig struct {
 	// GID     GIDConfig     `yaml:"gid"`
 }
 
+type RestrictedPipeConfig struct{
+	Enable bool
+	Mode String  `yaml:"mode"`
+	Target string   `yaml:"target"`
+}
+
 type RestrictedMountConfig struct {
 	Enable         bool
 	Mode           string   `yaml:"mode"`
@@ -100,6 +106,7 @@ type Config struct {
 	RestrictedMountConfig      `yaml:"mount"`
 	DNSProxyConfig             `yaml:"dns_proxy"`
 	SignalLogConfig            `yaml:"signals"`
+	RestrictedPipeConfig       `yaml:"pipe"`
 	Log                        LogConfig
 }
 
@@ -141,6 +148,11 @@ func DefaultConfig() *Config {
 				Deny:  []string{},
 			},
 		},
+		RestrictedPipeConfig: RestrictedPipeConfig{
+			Enable: true,
+			Mode:   "monitor",
+			Target:         "host",
+		}
 
 		Log: LogConfig{
 			Level:  "INFO",
@@ -161,6 +173,7 @@ func NewConfig(configPath string) (*Config, error) {
 	d := yaml.NewDecoder(file)
 
 	config := DefaultConfig()
+	
 	if err := d.Decode(&config); err != nil {
 		return nil, err
 	}
@@ -170,6 +183,8 @@ func NewConfig(configPath string) (*Config, error) {
 		return nil, err
 	}
 
+	fmt.Println("Configuration:")
+	fmt.Printf("%+v\n", config)
 	return config, nil
 }
 
@@ -205,6 +220,12 @@ func (c *Config) IsRestrictedMode(target string) bool {
 		} else {
 			return false
 		}
+	case "pipe":
+		if c.RestrictedPipeConfig.Mode == "block" {
+			return true
+		} else {
+			return false
+		}
 	default:
 		return false
 	}
@@ -226,6 +247,12 @@ func (c *Config) IsOnlyContainer(target string) bool {
 		}
 	case "mount":
 		if c.RestrictedMountConfig.Target == "container" {
+			return true
+		} else {
+			return false
+		}
+	case "pipe":
+		if c.RestrictedPipeConfig.Target == "container" {
 			return true
 		} else {
 			return false

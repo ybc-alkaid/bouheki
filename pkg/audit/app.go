@@ -61,6 +61,7 @@ func NewApp(version string) *cli.App {
 		wg.Add(3)
 
 		go signallog.RunAudit(ctx, &wg, conf)
+		//fmt.Println("Configuration:")
 		// go fileaccess.RunAudit(ctx, &wg, conf)
 		// go network.RunAudit(ctx, &wg, conf)
 		// go mount.RunAudit(ctx, &wg, conf)

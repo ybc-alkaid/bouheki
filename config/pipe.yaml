@@ -1,0 +1,3 @@
+pipe:
+  mode: block
+  target: host

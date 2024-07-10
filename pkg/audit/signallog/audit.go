@@ -51,6 +51,7 @@ func setupBPFProgram() (*libbpfgo.Module, error) {
 func RunAudit(ctx context.Context, wg *sync.WaitGroup, conf *config.Config) error {
 	log.Info("Launching the signal audit...")
 	defer wg.Done()
+	
 
 	mod, err := setupBPFProgram()
 	if err != nil {

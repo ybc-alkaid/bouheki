@@ -191,3 +191,17 @@ func (l *SignalLog) Info() {
 		"Comm":     l.Comm,
 	}).Info("Signal event is trapped in the filter.")
 }
+
+type PipeLog struct {
+	AuditEventLog
+}
+
+func (l *PipeLog) Info() {
+	Logger.WithFields(logrus.Fields{
+		"Action":     l.Action,
+		"Hostname":   l.Hostname,
+		"PID":        l.PID,
+		"Comm":       l.Comm,
+		"ParentComm": l.ParentComm,
+	}).Info("Pipe is trapped in the filter.")
+}
